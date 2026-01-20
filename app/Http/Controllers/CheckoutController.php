@@ -62,7 +62,7 @@ class CheckoutController extends Controller
 
         $selectedIds = session('checkout_items', []);
 
-        DB::transaction(function () use ($request, $selectedIds) {
+        $order = DB::transaction(function () use ($request, $selectedIds) {
 
             $query = Cart::where('user_id', auth()->id())->with('product');
             
@@ -118,8 +118,10 @@ class CheckoutController extends Controller
             }
             
             session()->forget('checkout_items');
+            
+            return $order;
         });
 
-        return redirect('/index')->with('success', 'Order placed successfully!');
+        return redirect()->route('payhere.checkout', ['order' => $order->id]);
     }
 }

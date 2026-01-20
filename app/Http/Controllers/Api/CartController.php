@@ -19,4 +19,28 @@ class CartController extends Controller
             'cart_items' => $cartItems
         ]);
     }
+
+    public function store(Request $request){
+        $cartItem = Cart::create([
+            'user_id' => $request->user()->id,
+            'product_id' => $request->product_id,
+            'quantity' => $request->quantity,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'cart_item' => $cartItem
+        ]);
+    }
+
+    public function remove(Cart $cartItem){
+        if($cartItem->user_id === auth()->id()){
+            $cartItem->delete();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Item removed'
+        ]);
+    }
 }

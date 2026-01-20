@@ -12,7 +12,7 @@ class ProductController extends Controller
     public function apiIndex(){
         $products = Product::with('category')
             ->latest()
-            ->take(4)
+            ->take(6)
             ->get()
             ->map(function ($product) {
                 $product->image_url = $product->image_path;
@@ -25,19 +25,42 @@ class ProductController extends Controller
         ]);
     }
 
-    public function apiMen(){
-        $products = Product::where('category_id',1)->get();
+    public function DiscountProducts(){
+        $products = Product::with('category')
+            ->oldest()
+            ->take(5)
+            ->get()
+            ->map(function ($product) {
+                $product->image_url = $product->image_path;
+                return $product;
+            });
+
         return response()->json([
             'success' => true,
             'data' => $products
         ]);
     }
 
-    public function apiWomen(){
-        $products = Product::where('category_id',2)->get();
+
+
+    public function byCategory(Request $request){
+        $query = Product::with('category');
+
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
         return response()->json([
             'success' => true,
-            'data' => $products
+            'data' => $query->get()
+        ]);
+    }
+
+    public function showDetails($id){
+        $product = Product::with('category')->find($id);
+        return response()->json([
+            'success' => true,
+            'data' => $product
         ]);
     }
 }

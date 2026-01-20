@@ -7,22 +7,11 @@ use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\PayhereController;
 
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 
 //Admin
@@ -32,11 +21,13 @@ Route::middleware([
     'verified',
     'admin',
 ])->group(function () {
-    //Display Products in dashboard
-    Route::get('/dashboard', [AdminProductController::class, 'index'])->name('dashboard');
+    
 
 
 });
+
+//Display Products in dashboard
+    Route::get('/dashboard', [AdminProductController::class, 'index'])->name('dashboard');
 
 
 //Customer
@@ -48,10 +39,14 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout/place', [CheckoutController::class, 'place'])->name('checkout.place');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    // PayHere Routes
+    Route::get('/payhere/checkout/{order}', [PayhereController::class, 'checkout'])->name('payhere.checkout');
+    Route::post('/payhere/notify', [PayhereController::class, 'notify'])->name('payhere.notify')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+    Route::get('/payhere/cancel', [PayhereController::class, 'cancel'])->name('payhere.cancel');
 });
-
-
-
+//Return after payment
+Route::get('/payhere/return', [PayhereController::class, 'return'])->name('payhere.return');
 
 
 //Get the categories and create a product
@@ -59,7 +54,7 @@ Route::get('/create', [CategoryController::class, 'create'])->name('create');
 Route::post('/create', [AdminProductController::class, 'store'])->name('products.store');
 
 //Display the Products
-Route::get('/index', [ProductController::class, 'index'])->name('products.index');
+Route::get('/', [ProductController::class, 'index'])->name('products.index');
 
 //Display Product Details
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
@@ -74,4 +69,8 @@ Route::get('/men',[ProductController::class,'showAllMen']);
 
 //Women's Product page
 Route::get('/women',[ProductController::class,'showAllWomen']);
+
+//Google Login
+Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 

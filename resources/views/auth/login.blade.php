@@ -1,4 +1,5 @@
 <x-guest-layout>
+
     <x-authentication-card>
         <x-slot name="logo">
             <x-authentication-card-logo />
@@ -42,6 +43,7 @@
                 <x-button class="ms-4">
                     {{ __('Log in') }}
                 </x-button>
+                <a href="{{ route('google.login') }}" class="ml-4 text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">{{ __('Login with Google') }}</a>
             </div>
         </form>
     </x-authentication-card>

@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 
-
+//New 
 
 //Flutter Api
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

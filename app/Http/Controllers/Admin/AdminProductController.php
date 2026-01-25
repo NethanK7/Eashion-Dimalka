@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use App\Http\Controllers\Controller;
 use Kreait\Firebase\Factory;
 
 class AdminProductController extends Controller
@@ -167,4 +167,6 @@ class AdminProductController extends Controller
         return redirect()->back()
             ->with('success', 'Product deleted successfully');
     }
+
+    
 }

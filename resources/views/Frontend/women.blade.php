@@ -19,7 +19,7 @@
             <div class="max-w-3xl">
                 <nav class="flex mb-8 text-[10px] tracking-[0.4em] uppercase font-bold" aria-label="Breadcrumb">
                     <ol class="flex items-center space-x-4 text-rose-900/40">
-                        <li><a href="/index" class="transition-colors hover:text-rose-600">Home</a></li>
+                        <li><a href="/" class="transition-colors hover:text-rose-600">Home</a></li>
                         <li><span class="w-1 h-1 rounded-full bg-rose-200"></span></li>
                         <li class="font-black text-rose-950">Women</li>
                     </ol>
@@ -48,7 +48,6 @@
             <div class="flex flex-col justify-between gap-8 pb-10 mb-16 border-b md:flex-row md:items-end border-rose-50">
                 <div>
                     <h2 class="text-4xl font-black tracking-tight text-rose-950">The Collection</h2>
-                    <p class="mt-2 text-sm font-medium text-rose-300">Showing {{ $products->count() }} curated masterpieces</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="relative">
@@ -156,6 +155,59 @@
             @endif
         </div>
     </div>
+    <!-- Premium Pagination -->
+            <div class="flex flex-col items-center justify-center gap-10 pt-20 mt-20 border-t border-slate-100">
+                <div class="flex items-center gap-3 sm:gap-6">
+                    {{-- Previous Page --}}
+                    @if ($products->onFirstPage())
+                        <span class="flex items-center gap-2 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-slate-200 uppercase cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                            </svg>
+                            Prev
+                        </span>
+                    @else
+                        <a href="{{ $products->previousPageUrl() }}" class="flex items-center gap-2 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-slate-900 uppercase hover:text-rose-600 transition-all duration-300 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 transition-transform group-hover:-translate-x-1">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                            </svg>
+                            Prev
+                        </a>
+                    @endif
+
+                    {{-- Page Numbers --}}
+                    <div class="hidden items-center gap-2 sm:flex">
+                        @foreach ($products->getUrlRange(max(1, $products->currentPage() - 2), min($products->lastPage(), $products->currentPage() + 2)) as $page => $url)
+                            @if ($page == $products->currentPage())
+                                <span class="relative flex items-center justify-center w-12 h-12 text-xs font-black text-white bg-rose-600 rounded-2xl shadow-lg shadow-rose-200">
+                                    {{ $page }}
+                                </span>
+                            @else
+                                <a href="{{ $url }}" class="flex items-center justify-center w-12 h-12 text-xs font-bold transition-all duration-300 rounded-2xl text-slate-400 hover:text-slate-900 hover:bg-slate-50">
+                                    {{ $page }}
+                                </a>
+                            @endif
+                        @endforeach
+                    </div>
+
+                    {{-- Next Page --}}
+                    @if ($products->hasMorePages())
+                        <a href="{{ $products->nextPageUrl() }}" class="flex items-center gap-2 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-slate-900 uppercase hover:text-rose-600 transition-all duration-300 group">
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 transition-transform group-hover:translate-x-1">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </a>
+                    @else
+                        <span class="flex items-center gap-2 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-slate-200 uppercase cursor-not-allowed">
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </span>
+                    @endif
+                </div>
+            </div>
 
     <!-- Collection Story Section -->
     <div class="relative py-24 mb-10 overflow-hidden bg-rose-50/20">

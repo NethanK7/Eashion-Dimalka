@@ -15,10 +15,11 @@ class CustomerMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if($request->user()->role_id !=2){
-            return response()->json([
-                'message' => 'Unauthorized'
-            ],403);
+        if (!$request->user() || $request->user()->role_id != 2) {
+            if ($request->user() && $request->user()->isAdmin()) {
+                return redirect('/dashboard');
+            }
+            return redirect('/');
         }
         return $next($request);
     }

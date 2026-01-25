@@ -9,7 +9,7 @@
             <ol class="flex items-center space-x-2">
                 <li><a href="{{ url('/') }}" class="hover:text-black">Home</a></li>
                 <li><span class="mx-2">/</span></li>
-                <li><a href="{{ url('/products') }}" class="hover:text-black">Products</a></li> <!-- Assuming /products exists or linking back to home/index logic -->
+                <li><a href="{{ url('#') }}" class="hover:text-black">Products</a></li>
                 <li><span class="mx-2">/</span></li>
                 <li class="font-medium text-black" aria-current="page">{{ $product->name }}</li>
             </ol>

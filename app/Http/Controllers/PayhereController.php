@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use Illuminate\Support\Facades\Log;
+use App\Models\Product;
+use Illuminate\Support\Facades\DB;
+use App\Models\Cart;
 
 class PayhereController extends Controller
 {
@@ -74,23 +77,59 @@ class PayhereController extends Controller
             )
         );
 
-        if (($local_md5sig === $md5sig) && ($status_code == 2)) {
-            $order = Order::find($order_id);
-            if ($order) {
-                $order->update(['status' => 'paid']);
-            }
+        if ($local_md5sig !== $md5sig || $status_code != 2) {
+            Log::warning('PayHere payment failed', $request->all());
+            return response()->json(['status' => 'failed'], 400);
         }
+
+        $this->processOrder($order_id);
 
         return response()->json(['status' => 'success']);
     }
 
     public function return(Request $request)
     {
+        // PayHere appends the order_id to the return URL
+        $order_id = $request->get('order_id');
+
+        if ($order_id) {
+            $this->processOrder($order_id);
+        }
+
         return redirect()->route('products.index')->with('success', 'Payment successful! Your order has been placed.');
     }
 
     public function cancel(Request $request)
     {
         return redirect()->route('checkout')->with('error', 'Payment was cancelled. You can try again.');
+    }
+
+    /**
+     * Helper method to process order fulfillment (status update & stock reduction)
+     */
+    private function processOrder($order_id)
+    {
+        DB::transaction(function () use ($order_id) {
+            $order = Order::with('items')->findOrFail($order_id);
+
+            // If order is already processed, don't do it again
+            if ($order->status === 'paid') {
+                return;
+            }
+
+            // 1. Update order status
+            $order->update([
+                'status' => 'paid',
+            ]);
+
+            // 2. Reduce each product's stock
+            foreach ($order->items as $item) {
+                Product::where('id', $item->product_id)
+                    ->decrement('stock_qty', $item->quantity);
+            }
+
+            // 3. Clear user's cart
+            Cart::where('user_id', $order->user_id)->delete();
+        });
     }
 }

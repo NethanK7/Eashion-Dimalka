@@ -3,15 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\PayhereController;
-
-
-
+use App\Http\Controllers\Admin\OrderManagement;
+use App\Http\Controllers\Admin\CustomerManagement;
 
 
 //Admin
@@ -21,14 +20,24 @@ Route::middleware([
     'verified',
     'admin',
 ])->group(function () {
-    
-
-
-});
-
-//Display Products in dashboard
+//Display Products in dashboard(pws - NewAdmin@123)
     Route::get('/dashboard', [AdminProductController::class, 'index'])->name('dashboard');
 
+//Get the categories and create a product
+Route::get('/create', [CategoryController::class, 'create'])->name('create');
+Route::post('/create', [AdminProductController::class, 'store'])->name('products.store');
+
+//Edit Products and delete
+Route::get('/edit/{id}', [AdminProductController::class, 'edit'])->name('products.edit');
+Route::post('/edit/{id}', [AdminProductController::class, 'update'])->name('products.update');
+Route::delete('/delete/{id}', [AdminProductController::class, 'destroy'])->name('products.destroy');
+
+//View Orders
+Route::get('/order-management', [OrderManagement::class, 'index'])->name('order-management');
+
+//View Customers
+Route::get('/customer-management', [CustomerManagement::class, 'index'])->name('customer-management');
+});
 
 //Customer
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
@@ -49,20 +58,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 Route::get('/payhere/return', [PayhereController::class, 'return'])->name('payhere.return');
 
 
-//Get the categories and create a product
-Route::get('/create', [CategoryController::class, 'create'])->name('create');
-Route::post('/create', [AdminProductController::class, 'store'])->name('products.store');
-
 //Display the Products
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 
 //Display Product Details
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
-
-//Edit Products and delete
-Route::get('/edit/{id}', [AdminProductController::class, 'edit'])->name('products.edit');
-Route::post('/edit/{id}', [AdminProductController::class, 'update'])->name('products.update');
-Route::delete('/delete/{id}', [AdminProductController::class, 'destroy'])->name('products.destroy');
 
 //Men's Product page
 Route::get('/men',[ProductController::class,'showAllMen']);

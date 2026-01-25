@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Product;
 
 
 class CategoryController extends Controller
@@ -10,7 +11,8 @@ class CategoryController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('admin_panel.createP', compact('categories'));
+        $products = Product::all();
+        return view('admin_panel.createP', compact('categories', 'products'));
     }
 
     public function testDatabase()

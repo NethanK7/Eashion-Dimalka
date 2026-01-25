@@ -21,11 +21,22 @@ class CartController extends Controller
     }
 
     public function store(Request $request){
-        $cartItem = Cart::create([
-            'user_id' => $request->user()->id,
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
-        ]);
+        $user = $request->user();
+
+        $cartItem = Cart::where('user_id', $user->id)
+            ->where('product_id', $request->product_id)
+            ->first();
+
+        if ($cartItem) {
+            $cartItem->increment('quantity', $request->quantity ?? 1);
+        } else {
+            // New product → add to cart
+            $cartItem = Cart::create([
+                'user_id' => $user->id,
+                'product_id' => $request->product_id,
+                'quantity' => $request->quantity ?? 1,
+            ]);
+        }
 
         return response()->json([
             'success' => true,
@@ -33,6 +44,7 @@ class CartController extends Controller
         ]);
     }
 
+    //Remove
     public function remove(Cart $cartItem){
         if($cartItem->user_id === auth()->id()){
             $cartItem->delete();
@@ -43,4 +55,27 @@ class CartController extends Controller
             'message' => 'Item removed'
         ]);
     }
+
+    //Update
+    public function update(Request $request, Cart $cartItem){
+        if ($cartItem->user_id !== $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cartItem->quantity = $request->quantity;
+        $cartItem->save();
+
+        return response()->json([
+            'success' => true,
+            'cart_item' => $cartItem
+        ]);
+    }
+
 }

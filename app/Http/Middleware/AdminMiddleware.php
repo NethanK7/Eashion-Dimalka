@@ -18,10 +18,10 @@ class AdminMiddleware
         if(!auth()->check()){
             return redirect('/login');
         }
-
+        
         //isAdmin function is under the Model;
         if(!auth()->user()->isAdmin()){
-            abort('403','Access denied');
+            return redirect('/');
         }
 
         return $next($request);

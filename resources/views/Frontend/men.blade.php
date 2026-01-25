@@ -15,7 +15,7 @@
             <div class="flex flex-col items-center text-center">
                 <nav class="flex mb-6 text-[10px] tracking-[0.3em] uppercase" aria-label="Breadcrumb">
                     <ol class="flex items-center space-x-4 text-slate-400">
-                        <li><a href="/index" class="transition-colors hover:text-white">Home</a></li>
+                        <li><a href="/" class="transition-colors hover:text-white">Home</a></li>
                         <li><span class="w-1 h-1 rounded-full bg-slate-600"></span></li>
                         <li class="font-black text-white">Men</li>
                     </ol>
@@ -104,11 +104,6 @@
                                     <div class="flex items-center gap-0.5 text-amber-400">
                                     </div>
                                 </div>
-                                <h3 class="text-sm font-bold tracking-tight transition-colors text-slate-900 group-hover:text-indigo-600">
-                                    <a href="{{ route('product.show', $product->id) }}">
-                                        {{ $product->name }}
-                                    </a>
-                                </h3>
                                 <div class="flex items-center gap-3 mt-2">
                                     <span class="text-base font-black text-slate-900">
                                         LKR {{ number_format($product->price * (1 - ($product->discount / 100)), 2) }}
@@ -126,4 +121,61 @@
             @endif
         </div>
     </div>
+            <!-- Premium Pagination -->
+            <div class="flex flex-col items-center justify-center gap-10 pt-20 mt-20 border-t border-slate-100">
+                <div class="flex items-center gap-3 sm:gap-6">
+                    {{-- Previous Page --}}
+                    @if ($products->onFirstPage())
+                        <span class="flex items-center gap-2 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-slate-200 uppercase cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                            </svg>
+                            Prev
+                        </span>
+                    @else
+                        <a href="{{ $products->previousPageUrl() }}" class="flex items-center gap-2 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-slate-900 uppercase hover:text-indigo-600 transition-all duration-300 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 transition-transform group-hover:-translate-x-1">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                            </svg>
+                            Prev
+                        </a>
+                    @endif
+
+                    {{-- Page Numbers --}}
+                    <div class="hidden items-center gap-2 sm:flex">
+                        @foreach ($products->getUrlRange(max(1, $products->currentPage() - 2), min($products->lastPage(), $products->currentPage() + 2)) as $page => $url)
+                            @if ($page == $products->currentPage())
+                                <span class="relative flex items-center justify-center w-12 h-12 text-xs font-black text-white bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-200">
+                                    {{ $page }}
+                                </span>
+                            @else
+                                <a href="{{ $url }}" class="flex items-center justify-center w-12 h-12 text-xs font-bold transition-all duration-300 rounded-2xl text-slate-400 hover:text-slate-900 hover:bg-slate-50">
+                                    {{ $page }}
+                                </a>
+                            @endif
+                        @endforeach
+                    </div>
+
+                    {{-- Next Page --}}
+                    @if ($products->hasMorePages())
+                        <a href="{{ $products->nextPageUrl() }}" class="flex items-center gap-2 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-slate-900 uppercase hover:text-indigo-600 transition-all duration-300 group">
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 transition-transform group-hover:translate-x-1">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </a>
+                    @else
+                        <span class="flex items-center gap-2 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-slate-200 uppercase cursor-not-allowed">
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </span>
+                    @endif
+                </div>
+
+                <p class="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase">
+                    Showing {{ $products->firstItem() }} to {{ $products->lastItem() }} of {{ $products->total() }} results
+                </p>
+            </div>
 @endsection

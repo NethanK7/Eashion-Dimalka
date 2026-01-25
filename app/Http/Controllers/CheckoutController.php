@@ -16,7 +16,6 @@ class CheckoutController extends Controller
     public function index()
     {
         $selectedIds = session('checkout_items', []);
-
         $query = Cart::where('user_id', Auth::id())->with('product');
 
         if (!empty($selectedIds)) {
@@ -63,9 +62,7 @@ class CheckoutController extends Controller
         $selectedIds = session('checkout_items', []);
 
         $order = DB::transaction(function () use ($request, $selectedIds) {
-
             $query = Cart::where('user_id', auth()->id())->with('product');
-            
             if (!empty($selectedIds)) {
                 $query->whereIn('id', $selectedIds);
             }
@@ -110,18 +107,10 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            // Clear ONLY selected items from Cart for this user
-            if (!empty($selectedIds)) {
-                Cart::whereIn('id', $selectedIds)->where('user_id', auth()->id())->delete();
-            } else {
-                Cart::where('user_id', auth()->id())->delete();
-            }
-            
             session()->forget('checkout_items');
             
             return $order;
         });
-
         return redirect()->route('payhere.checkout', ['order' => $order->id]);
     }
 }

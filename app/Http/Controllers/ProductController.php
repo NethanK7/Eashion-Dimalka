@@ -16,12 +16,12 @@ class ProductController extends Controller
     }
 
     public function showAllMen(){
-        $products = Product::where('category_id',1)->get();
+        $products = Product::where('category_id',1)->paginate(8);
         return view('Frontend.men',compact('products'));
     }
 
     public function showAllWomen(){
-        $products = Product::where('category_id',2)->get();
+        $products = Product::where('category_id',2)->paginate(8);
         return view('Frontend.women',compact('products'));
     }
 

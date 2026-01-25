@@ -7,7 +7,7 @@
     <!-- Compact Progress -->
     <div class="bg-white border-b border-gray-100">
         <div class="flex items-center justify-between px-4 mx-auto max-w-7xl h-14">
-            <a href="{{ url('/index') }}" class="group flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-gray-500 hover:text-black">
+            <a href="{{ url('/') }}" class="group flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-gray-500 hover:text-black">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                 </svg>

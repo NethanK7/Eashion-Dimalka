@@ -61,7 +61,8 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [],
+            "build_id": "2026-01-30-1415"
         }
     },
     "config": {
